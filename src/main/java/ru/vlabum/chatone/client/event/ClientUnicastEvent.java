@@ -1,12 +1,14 @@
 package ru.vlabum.chatone.client.event;
 
-import ru.vlabum.chatone.model.PacketUnicast;
+import lombok.Getter;
+import ru.vlabum.chatone.model.PacketUnicastRequest;
 
+@Getter
 public class ClientUnicastEvent {
 
-    private final PacketUnicast packet;
+    private final PacketUnicastRequest packet;
 
-    public ClientUnicastEvent(final PacketUnicast packet) {
+    public ClientUnicastEvent(final PacketUnicastRequest packet) {
         this.packet = packet;
     }
 

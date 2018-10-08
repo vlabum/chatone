@@ -1,25 +1,26 @@
 package ru.vlabum.chatone.model;
 
+
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 /**
- * Пакет, пришедший с сервера
- * (устарел) TODO: выкинуть из проекта
+ * Пакет-сообщение для одного адресата
  */
 @Getter
 @Setter
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class PacketMessage extends Packet {
+public class PacketUnicastRequest extends Packet {
 
     {
-        setType(PacketType.MESSAGE);
+        setType(PacketType.UNICAST_REQUEST);
     }
 
-    private String login; // от кого сообщение
+    private String login; // кому сообщение
+
     private String message; // сообщение
 
 }

@@ -4,21 +4,15 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.jetbrains.annotations.Nullable;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class PacketLogin extends Packet {
+public class PacketPingRequest extends Packet {
 
     {
-        setType(PacketType.LOGIN);
+        setType(PacketType.PING_REQUEST);
     }
 
-    @Nullable
-    private String login;
-
-    @Nullable
-    private String password;
 }

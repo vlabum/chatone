@@ -4,20 +4,22 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
 import org.jetbrains.annotations.NotNull;
 import ru.vlabum.chatone.client.api.Client;
-import ru.vlabum.chatone.client.event.ClientLoginEvent;
-import ru.vlabum.chatone.model.PacketLoginRequest;
+import ru.vlabum.chatone.client.event.ClientUnicastEvent;
+import ru.vlabum.chatone.model.PacketUnicastRequest;
 
+import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.ObservesAsync;
 import javax.inject.Inject;
 
-public class ClientLoginHandler {
+@ApplicationScoped
+public class ClientUnicastHandler {
 
     @Inject
     private Client client;
 
     @SneakyThrows
-    public void send(@ObservesAsync final ClientLoginEvent event){
-        @NotNull PacketLoginRequest packet = event.getPacket();
+    public void send(@ObservesAsync final ClientUnicastEvent event){
+        @NotNull PacketUnicastRequest packet = event.getPacket();
         @NotNull ObjectMapper mapper = new ObjectMapper();
         client.send(mapper.writeValueAsString(packet));
     }

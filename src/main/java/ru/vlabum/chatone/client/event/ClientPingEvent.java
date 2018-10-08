@@ -1,12 +1,12 @@
 package ru.vlabum.chatone.client.event;
 
-import ru.vlabum.chatone.model.PacketPing;
+import ru.vlabum.chatone.model.PacketPingRequest;
 
 public class ClientPingEvent {
 
-    private final PacketPing packet;
+    private final PacketPingRequest packet;
 
-    public ClientPingEvent(final PacketPing packet) {
+    public ClientPingEvent(final PacketPingRequest packet) {
         this.packet = packet;
     }
 }

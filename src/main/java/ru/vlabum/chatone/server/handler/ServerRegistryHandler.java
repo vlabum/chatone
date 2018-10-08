@@ -3,7 +3,9 @@ package ru.vlabum.chatone.server.handler;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.NonNull;
 import lombok.SneakyThrows;
-import ru.vlabum.chatone.model.PacketRegistry;
+import ru.vlabum.chatone.model.PacketRegistryRequest;
+import ru.vlabum.chatone.model.PacketRegistryResponse;
+import ru.vlabum.chatone.model.PacketType;
 import ru.vlabum.chatone.server.api.ConnectionService;
 import ru.vlabum.chatone.server.api.UserService;
 import ru.vlabum.chatone.server.event.ServerRegistryEvent;
@@ -27,10 +29,10 @@ public class ServerRegistryHandler {
         @NonNull final Socket socket = event.getSocket();
         @NonNull final String message = event.getMessage();
         @NonNull final ObjectMapper objectMapper = new ObjectMapper();
-        @NonNull final PacketRegistry packet = objectMapper.readValue(message, PacketRegistry.class);
+        @NonNull final PacketRegistryRequest packet = objectMapper.readValue(message, PacketRegistryRequest.class);
         final boolean result = userService.registry(packet.getLogin(), packet.getPassword());
-        connectionService.sendResult(socket, result);
+        @NonNull final PacketRegistryResponse packetResp = new PacketRegistryResponse();
+        connectionService.sendResult(socket, PacketType.REGISTRY_RESPONSE, result);
     }
-
 
 }

@@ -1,25 +1,23 @@
 package ru.vlabum.chatone.model;
 
-
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-/**
- * Пакет-сообщение для одного адресата
- */
+import java.util.ArrayList;
+import java.util.List;
+
 @Getter
 @Setter
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class PacketUnicast extends Packet {
+public class PacketLoginsResponse extends Packet {
 
     {
-        setType(PacketType.UNICAST);
+        setType(PacketType.LOGINS_RESPONSE);
     }
 
-    private String login; // кому сообщение
-    private String message; // сообщение
+    private List<String> users = new ArrayList<>();
 
 }

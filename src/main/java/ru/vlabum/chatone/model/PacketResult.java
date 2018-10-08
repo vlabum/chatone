@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.jetbrains.annotations.NotNull;
 
 @Getter
 @Setter
@@ -17,6 +18,14 @@ public class PacketResult extends Packet {
 
     private boolean success = true;
 
-    public PacketResult(boolean success) { this.success = success; }
+    public PacketResult(@NotNull Boolean success) { this.success = success; }
+
+    public PacketResult(
+            @NotNull final PacketType packetType,
+            @NotNull final Boolean success
+    ) {
+        setType(packetType);
+        this.success = success;
+    }
 
 }

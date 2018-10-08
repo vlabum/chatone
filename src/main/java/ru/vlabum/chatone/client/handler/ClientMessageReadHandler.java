@@ -3,10 +3,13 @@ package ru.vlabum.chatone.client.handler;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ru.vlabum.chatone.client.api.Client;
 import ru.vlabum.chatone.client.event.ClientMessageReadEvent;
 import ru.vlabum.chatone.client.event.ClientMessageViewEvent;
+import ru.vlabum.chatone.model.Packet;
+import ru.vlabum.chatone.model.PacketType;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Event;
@@ -28,17 +31,45 @@ public class ClientMessageReadHandler {
     @SneakyThrows
     public void read(@ObservesAsync final ClientMessageReadEvent event) {
         final String messageJson = client.getIn().readUTF();
+        System.out.println(messageJson);
+
         final ObjectMapper mapper = new ObjectMapper();
-        JsonNode node =  mapper.readTree(messageJson);
-        @Nullable JsonNode message = node.findValue("message");
-        if (message == null) {
-            clientMessageReadEvent.fireAsync(new ClientMessageReadEvent());
-            return;
+        @NotNull final Packet packet = mapper.readValue(messageJson, Packet.class);
+        if (packet.getType() == null) packet.setType(PacketType.NONE);
+
+        switch (packet.getType()){
+
+            case PING_RESPONSE:
+                break;
+
+            case LOGIN_RESPONSE:
+                break;
+
+            case LOGOUT_RESPONSE:
+                break;
+
+            case REGISTRY_RESPONSE:
+                break;
+
+            case BROADCAST_RESPONSE:
+                clientMessageViewEvent.fireAsync(new ClientMessageViewEvent(
+                        messageJson,
+                        PacketType.BROADCAST_RESPONSE,
+                        client.getWindow())
+                );
+                break;
+
+            case UNICAST_RESPONSE:
+                clientMessageViewEvent.fireAsync(new ClientMessageViewEvent(
+                        messageJson,
+                        PacketType.UNICAST_RESPONSE,
+                        client.getWindow())
+                );
+                break;
+
         }
-        @Nullable JsonNode loginNode = node.findValue("login");
-        final String sendText = (loginNode == null ? "" : loginNode.asText()+": ");
-        clientMessageViewEvent.fireAsync(new ClientMessageViewEvent(sendText + message.asText(), client.getWindow()));
         clientMessageReadEvent.fireAsync(new ClientMessageReadEvent());
+
     }
 
 }

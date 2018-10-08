@@ -1,12 +1,12 @@
 package ru.vlabum.chatone.client.event;
 
-import ru.vlabum.chatone.model.PacketRegistry;
+import ru.vlabum.chatone.model.PacketRegistryRequest;
 
 public class ClientRegistryEvent {
 
-    private final PacketRegistry packet;
+    private final PacketRegistryRequest packet;
 
-    public ClientRegistryEvent(final PacketRegistry packet) {
+    public ClientRegistryEvent(final PacketRegistryRequest packet) {
         this.packet = packet;
     }
 

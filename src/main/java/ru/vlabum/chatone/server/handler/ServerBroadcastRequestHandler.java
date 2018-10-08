@@ -4,18 +4,20 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import ru.vlabum.chatone.model.PacketBroadcast;
+import ru.vlabum.chatone.model.PacketBroadcastRequest;
+import ru.vlabum.chatone.model.PacketBroadcastResponse;
 import ru.vlabum.chatone.server.api.ConnectionService;
 import ru.vlabum.chatone.server.event.ServerBroadcastEvent;
 import ru.vlabum.chatone.server.model.Connection;
 
 import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.event.Event;
 import javax.enterprise.event.ObservesAsync;
 import javax.inject.Inject;
 import java.net.Socket;
 
 @ApplicationScoped
-public class ServerBroadcastHandler {
+public class ServerBroadcastRequestHandler {
 
     @Inject
     private ConnectionService connectionService;
@@ -27,11 +29,13 @@ public class ServerBroadcastHandler {
         if (connection == null) return;
         @Nullable String login = connection.getLogin();
         if (login == null || login.isEmpty()) login = "(anonim)";
-        @NotNull final String message = event.getMessage();
         @NotNull ObjectMapper mapper = new ObjectMapper();
-        @NotNull final PacketBroadcast packet = mapper.readValue(event.getMessage(), PacketBroadcast.class);
+        @NotNull final PacketBroadcastRequest packet = mapper.readValue(event.getMessage(), PacketBroadcastRequest.class);
+        @NotNull final PacketBroadcastResponse response = new PacketBroadcastResponse();
+        response.setLogin(login);
+        response.setMessage(packet.getMessage());
         for (final Connection item: connectionService.connections()){
-            connectionService.sendMessage(item.getSocket(), login, packet.getMessage());
+            connectionService.sendMessage(item.getSocket(), login, mapper.writeValueAsString(response));
         }
     }
 
