@@ -4,18 +4,15 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.jetbrains.annotations.Nullable;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class PacketBroadcast extends Packet {
+public class PacketPingResponse extends PacketResult {
 
     {
-        setType(PacketType.BROADCAST);
+        setType(PacketType.PING_RESPONSE);
     }
 
-    @Nullable
-    private String message = "";
 }

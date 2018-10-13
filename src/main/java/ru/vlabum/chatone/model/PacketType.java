@@ -2,14 +2,29 @@ package ru.vlabum.chatone.model;
 
 public enum  PacketType {
     NONE,
-    PING,
+
+    PING_REQUEST,
+    PING_RESPONSE,
+
     RESULT,
 
-    REGISTRY,
-    LOGOUT,
-    LOGIN,
+    REGISTRY_REQUEST,
+    REGISTRY_RESPONSE,
+
+    LOGOUT_REQUEST,
+    LOGOUT_RESPONSE,
+
+    LOGIN_REQUEST,
+    LOGIN_RESPONSE,
 
     MESSAGE,
-    BROADCAST,
-    UNICAST
+
+    BROADCAST_REQUEST,
+    BROADCAST_RESPONSE,
+
+    UNICAST_REQUEST,
+    UNICAST_RESPONSE,
+
+    LOGINS_REQUEST,
+    LOGINS_RESPONSE
 }

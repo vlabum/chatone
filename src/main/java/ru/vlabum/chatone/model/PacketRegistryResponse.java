@@ -9,10 +9,10 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class PacketPing extends Packet{
+public class PacketRegistryResponse extends PacketResult {
 
     {
-        setType(PacketType.PING);
+        setType(PacketType.REGISTRY_RESPONSE);
     }
 
 }

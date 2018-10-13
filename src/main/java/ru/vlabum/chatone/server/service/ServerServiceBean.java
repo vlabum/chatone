@@ -21,7 +21,7 @@ public class ServerServiceBean implements Server {
     private ChatConfig config;
 
     @Inject
-    private Event<ServerConnectionEvent> serverConnectionEventEvent;
+    private Event<ServerConnectionEvent> serverConnectionEvent;
 
     private ServerSocket serverSocket;
 
@@ -29,7 +29,7 @@ public class ServerServiceBean implements Server {
     @SneakyThrows
     public void run() {
         serverSocket = new ServerSocket(config.getPort());
-        serverConnectionEventEvent.fire(new ServerConnectionEvent());
+        serverConnectionEvent.fire(new ServerConnectionEvent());
     }
 
 }

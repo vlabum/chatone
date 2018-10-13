@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
 import org.jetbrains.annotations.NotNull;
 import ru.vlabum.chatone.model.Packet;
-import ru.vlabum.chatone.model.PacketUnicast;
 import ru.vlabum.chatone.server.event.*;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -45,27 +44,27 @@ public class ServerMessageInputHandler {
 
         switch (packet.getType()) {
 
-            case PING:
+            case PING_REQUEST:
                 serverPingEvent.fireAsync(new ServerPingEvent(socket, message));
                 break;
 
-            case REGISTRY:
+            case REGISTRY_REQUEST:
                 serverRegistryEventEvent.fireAsync(new ServerRegistryEvent(socket, message));
                 break;
 
-            case LOGIN:
+            case LOGIN_REQUEST:
                 serverLoginEventEvent.fireAsync(new ServerLoginEvent(socket, message));
                 break;
 
-            case BROADCAST:
+            case BROADCAST_REQUEST:
                 serverBroadcastEvent.fireAsync(new ServerBroadcastEvent(socket, message));
                 break;
 
-            case LOGOUT:
+            case LOGOUT_REQUEST:
                 serverLogoutEvent.fireAsync(new ServerLogoutEvent(socket, message));
                 break;
 
-            case UNICAST:
+            case UNICAST_REQUEST:
                 serverUnicastEvent.fireAsync(new ServerUnicastEvent(socket, message));
                 break;
 

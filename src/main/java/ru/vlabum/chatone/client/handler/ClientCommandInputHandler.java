@@ -39,10 +39,10 @@ public class ClientCommandInputHandler {
         ObjectMapper objectMapper = new ObjectMapper();
 
         if (isJson(command, "login")) {
-            PacketLogin packetLogin;
+            PacketLoginRequest packetLoginRequest;
             try {
-                packetLogin = objectMapper.readValue(command, PacketLogin.class);
-                clientLoginEvent.fireAsync(new ClientLoginEvent(packetLogin));
+                packetLoginRequest = objectMapper.readValue(command, PacketLoginRequest.class);
+                clientLoginEvent.fireAsync(new ClientLoginEvent(packetLoginRequest));
             } catch (Exception e) {
                 return;
             }
@@ -51,11 +51,12 @@ public class ClientCommandInputHandler {
 
         if (isJson(command, "unicast")) {
             try {
-                final PacketUnicast packetUnicast = objectMapper.readValue(command, PacketUnicast.class);
-                clientUnicastEvent.fireAsync(new ClientUnicastEvent(packetUnicast));
+                final PacketUnicastRequest packetUnicastRequest = new PacketUnicastRequest();
+                packetUnicastRequest.setMessage(getValueJson(command, "unicast"));
+                clientUnicastEvent.fireAsync(new ClientUnicastEvent(packetUnicastRequest));
             } catch (Exception e) {
                 //TODO нужно будет переделать, чтобы не отсылалось всем, чтобы не спалиться :)
-                final PacketBroadcast packetBroadcast = new PacketBroadcast();
+                final PacketBroadcastRequest packetBroadcast = new PacketBroadcastRequest();
                 packetBroadcast.setMessage(command);
                 clientBroadcastEvent.fireAsync(new ClientBroadcastEvent(packetBroadcast));
             }
@@ -64,11 +65,11 @@ public class ClientCommandInputHandler {
 
         if (isJson(command, "registry")) {
             try {
-                final PacketRegistry packetRegistry = objectMapper.readValue(command, PacketRegistry.class);
-                clientRegistryEvent.fireAsync(new ClientRegistryEvent(packetRegistry));
+                final PacketRegistryRequest packetRegistryRequest = objectMapper.readValue(command, PacketRegistryRequest.class);
+                clientRegistryEvent.fireAsync(new ClientRegistryEvent(packetRegistryRequest));
             } catch (Exception e) {
                 //TODO нужно будет переделать, чтобы не отсылалось всем, чтобы не спалиться :)
-                final PacketBroadcast packetBroadcast = new PacketBroadcast();
+                final PacketBroadcastRequest packetBroadcast = new PacketBroadcastRequest();
                 packetBroadcast.setMessage(command);
                 clientBroadcastEvent.fireAsync(new ClientBroadcastEvent(packetBroadcast));
             }
@@ -77,15 +78,15 @@ public class ClientCommandInputHandler {
 
         if (isJson(command, "ping")) {
             try {
-                final PacketPing packetPing = objectMapper.readValue(command, PacketPing.class);
-                clientPingEvent.fireAsync(new ClientPingEvent(packetPing));
+                final PacketPingRequest packetPingRequest = objectMapper.readValue(command, PacketPingRequest.class);
+                clientPingEvent.fireAsync(new ClientPingEvent(packetPingRequest));
             } catch (Exception e) {
                 return;
             }
             return;
         }
 
-        final PacketBroadcast packetBroadcast = new PacketBroadcast();
+        final PacketBroadcastRequest packetBroadcast = new PacketBroadcastRequest();
         packetBroadcast.setMessage(command);
         clientBroadcastEvent.fireAsync(new ClientBroadcastEvent(packetBroadcast));
 
@@ -103,4 +104,15 @@ public class ClientCommandInputHandler {
         }
     }
 
+    @SneakyThrows
+    private String getValueJson(final String string, final String findNode) {
+        try {
+            final ObjectMapper mapper = new ObjectMapper();
+            JsonNode jsonNode =  mapper.readTree(string);
+            JsonNode node = jsonNode.findValue(findNode);
+            return node.asText();
+        } catch (final Exception e) {
+            return null;
+        }
+    }
 }

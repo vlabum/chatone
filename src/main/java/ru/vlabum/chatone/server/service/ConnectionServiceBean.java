@@ -8,6 +8,7 @@ import org.jetbrains.annotations.Nullable;
 import ru.vlabum.chatone.model.Packet;
 import ru.vlabum.chatone.model.PacketMessage;
 import ru.vlabum.chatone.model.PacketResult;
+import ru.vlabum.chatone.model.PacketType;
 import ru.vlabum.chatone.server.api.ConnectionService;
 import ru.vlabum.chatone.server.model.Connection;
 
@@ -58,10 +59,14 @@ public class ConnectionServiceBean implements ConnectionService {
     }
 
     @SneakyThrows
-    public void sendResult(@Nullable final Socket socket, @Nullable final Boolean result){
+    public void sendResult(
+            @Nullable final Socket socket,
+            @Nullable final PacketType packetType,
+            @Nullable final Boolean result
+    ){
         if (socket == null) return;
         if (result == null) return;
-        final Packet packetResult = new PacketResult(result);
+        final PacketResult packetResult = new PacketResult(packetType, result);
         final ObjectMapper objectMapper = new ObjectMapper();
         final String message = objectMapper.writeValueAsString(packetResult);
         final DataOutputStream stream = new DataOutputStream(socket.getOutputStream());
@@ -70,11 +75,37 @@ public class ConnectionServiceBean implements ConnectionService {
 
     @SneakyThrows
     @Override
-    public void sendMessage(@Nullable final Socket socket, @Nullable final String login, @Nullable final String message){
+    public void sendMessage(
+            @Nullable final Socket socket,
+            @Nullable final String login,
+            @Nullable final String message
+    ){
         if (socket == null) return;
         if (login == null || login.isEmpty()) return;
         if (message == null || message.isEmpty()) return;
+        final DataOutputStream stream = new DataOutputStream(socket.getOutputStream());
+        stream.writeUTF(message);
+    }
+
+    @SneakyThrows
+    @Override
+    public void sendMessage(
+            @Nullable final Socket socket,
+            @Nullable final String login,
+            @Nullable final String message,
+            @Nullable final PacketType packetType
+    ){
+        if (socket == null) return;
+        if (login == null || login.isEmpty()) return;
+        if (message == null || message.isEmpty()) return;
+
+        switch (packetType){
+            case BROADCAST_RESPONSE:
+
+                break;
+        }
         final PacketMessage packetMessage = new PacketMessage();
+
         packetMessage.setLogin(login);
         packetMessage.setMessage(message);
         final ObjectMapper objectMapper = new ObjectMapper();
