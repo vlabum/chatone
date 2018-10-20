@@ -16,7 +16,7 @@ public class PacketResult extends Packet {
         setType(PacketType.RESULT);
     }
 
-    private boolean success = true;
+    @NotNull private boolean success = true;
 
     public PacketResult(@NotNull Boolean success) { this.success = success; }
 

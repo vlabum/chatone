@@ -1,6 +1,8 @@
 package ru.vlabum.chatone.server.event;
 
 import lombok.Getter;
+import ru.vlabum.chatone.model.PacketBroadcastRequest;
+import ru.vlabum.chatone.model.PacketBroadcastResponse;
 
 import java.net.Socket;
 
@@ -8,11 +10,12 @@ import java.net.Socket;
 public class ServerBroadcastEvent {
 
     private final Socket socket;
-    private final String message;
 
-    public ServerBroadcastEvent(final Socket socket, final String message) {
+    private final PacketBroadcastRequest packet; // запрос, на который реагируем
+
+    public ServerBroadcastEvent(final Socket socket, final PacketBroadcastRequest packet) {
         this.socket = socket;
-        this.message = message;
+        this.packet = packet;
     }
 
 }

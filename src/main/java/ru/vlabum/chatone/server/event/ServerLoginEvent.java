@@ -1,6 +1,7 @@
 package ru.vlabum.chatone.server.event;
 
 import lombok.Getter;
+import ru.vlabum.chatone.model.PacketLoginRequest;
 
 import java.net.Socket;
 
@@ -8,11 +9,12 @@ import java.net.Socket;
 public class ServerLoginEvent {
 
     private final Socket socket;
-    private final String message;
 
-    public ServerLoginEvent(final Socket socket, final String message) {
+    private final PacketLoginRequest packet; // запрос, на который реагируем
+
+    public ServerLoginEvent(final Socket socket, final PacketLoginRequest packet) {
         this.socket = socket;
-        this.message = message;
+        this.packet = packet;
     }
 
 }

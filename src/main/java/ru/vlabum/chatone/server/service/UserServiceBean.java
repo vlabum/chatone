@@ -1,9 +1,10 @@
 package ru.vlabum.chatone.server.service;
 
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import ru.vlabum.chatone.model.User;
+import ru.vlabum.chatone.server.model.User;
 import ru.vlabum.chatone.server.api.UserService;
 
 import javax.annotation.PostConstruct;
@@ -11,6 +12,7 @@ import javax.enterprise.context.ApplicationScoped;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+@Getter
 @ApplicationScoped
 @NoArgsConstructor
 public class UserServiceBean implements UserService {

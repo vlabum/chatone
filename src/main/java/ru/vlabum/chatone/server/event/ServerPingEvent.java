@@ -1,15 +1,18 @@
 package ru.vlabum.chatone.server.event;
 
+import ru.vlabum.chatone.model.PacketPingRequest;
+
 import java.net.Socket;
 
 public class ServerPingEvent {
 
     private final Socket socket;
-    private final String message;
 
-    public ServerPingEvent(final Socket socket, final String message) {
+    private final PacketPingRequest packet;
+
+    public ServerPingEvent(final Socket socket, final PacketPingRequest packet) {
         this.socket = socket;
-        this.message = message;
+        this.packet = packet;
     }
 
 }

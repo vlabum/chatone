@@ -74,6 +74,18 @@ public class ConnectionServiceBean implements ConnectionService {
     }
 
     @SneakyThrows
+    public void sendResult(
+            @Nullable final Socket socket,
+            @Nullable final PacketResult packetResult
+    ){
+        if (socket == null) return;
+        final ObjectMapper objectMapper = new ObjectMapper();
+        final String message = objectMapper.writeValueAsString(packetResult);
+        final DataOutputStream stream = new DataOutputStream(socket.getOutputStream());
+        stream.writeUTF(message);
+    }
+
+    @SneakyThrows
     @Override
     public void sendMessage(
             @Nullable final Socket socket,

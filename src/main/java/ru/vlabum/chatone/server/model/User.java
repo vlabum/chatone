@@ -1,4 +1,4 @@
-package ru.vlabum.chatone.model;
+package ru.vlabum.chatone.server.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Getter;

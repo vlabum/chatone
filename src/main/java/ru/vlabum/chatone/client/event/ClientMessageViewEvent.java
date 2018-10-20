@@ -8,12 +8,14 @@ import ru.vlabum.chatone.model.PacketType;
 @Getter
 public class ClientMessageViewEvent {
 
-    private final String message;
+    private final Packet packet;
+
     private final ChatWindow window;
+
     private final PacketType packetType;
 
-    public ClientMessageViewEvent(final String message, final PacketType packetType, final ChatWindow window) {
-        this.message = message;
+    public ClientMessageViewEvent(final Packet packet, final PacketType packetType, final ChatWindow window) {
+        this.packet = packet;
         this.window = window;
         this.packetType = packetType;
     }

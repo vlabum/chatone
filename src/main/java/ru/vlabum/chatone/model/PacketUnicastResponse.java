@@ -1,9 +1,11 @@
 package ru.vlabum.chatone.model;
 
 import lombok.Getter;
+import lombok.Setter;
 import org.jetbrains.annotations.Nullable;
 
 @Getter
+@Setter
 public class PacketUnicastResponse extends Packet {
 
     {
@@ -15,4 +17,5 @@ public class PacketUnicastResponse extends Packet {
 
     @Nullable
     private String message = ""; // сообщение
+
 }

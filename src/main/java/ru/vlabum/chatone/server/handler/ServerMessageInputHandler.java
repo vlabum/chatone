@@ -3,7 +3,7 @@ package ru.vlabum.chatone.server.handler;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
 import org.jetbrains.annotations.NotNull;
-import ru.vlabum.chatone.model.Packet;
+import ru.vlabum.chatone.model.*;
 import ru.vlabum.chatone.server.event.*;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -33,6 +33,9 @@ public class ServerMessageInputHandler {
     @Inject
     private Event<ServerUnicastEvent> serverUnicastEvent;
 
+    @Inject
+    private Event<ServerLoginsEvent> serverLoginsEvent;
+
     @SneakyThrows
     public void observe(@ObservesAsync final ServerMessageInputEvent event) {
         System.out.println("ServerMessageInputHandler");
@@ -45,27 +48,38 @@ public class ServerMessageInputHandler {
         switch (packet.getType()) {
 
             case PING_REQUEST:
-                serverPingEvent.fireAsync(new ServerPingEvent(socket, message));
+                @NotNull final PacketPingRequest pingRequest = objectMapper.readValue(message, PacketPingRequest.class);
+                serverPingEvent.fireAsync(new ServerPingEvent(socket, pingRequest));
                 break;
 
             case REGISTRY_REQUEST:
-                serverRegistryEventEvent.fireAsync(new ServerRegistryEvent(socket, message));
+                @NotNull final PacketRegistryRequest registryRequest = objectMapper.readValue(message, PacketRegistryRequest.class);
+                serverRegistryEventEvent.fireAsync(new ServerRegistryEvent(socket, registryRequest));
                 break;
 
             case LOGIN_REQUEST:
-                serverLoginEventEvent.fireAsync(new ServerLoginEvent(socket, message));
+                @NotNull final PacketLoginRequest loginRequest = objectMapper.readValue(message, PacketLoginRequest.class);
+                serverLoginEventEvent.fireAsync(new ServerLoginEvent(socket, loginRequest));
                 break;
 
             case BROADCAST_REQUEST:
-                serverBroadcastEvent.fireAsync(new ServerBroadcastEvent(socket, message));
+                @NotNull final PacketBroadcastRequest broadcastRequest = objectMapper.readValue(message, PacketBroadcastRequest.class);
+                serverBroadcastEvent.fireAsync(new ServerBroadcastEvent(socket, broadcastRequest));
                 break;
 
             case LOGOUT_REQUEST:
-                serverLogoutEvent.fireAsync(new ServerLogoutEvent(socket, message));
+                @NotNull final PacketLogoutRequest logoutRequest = objectMapper.readValue(message, PacketLogoutRequest.class);
+                serverLogoutEvent.fireAsync(new ServerLogoutEvent(socket, logoutRequest));
                 break;
 
             case UNICAST_REQUEST:
-                serverUnicastEvent.fireAsync(new ServerUnicastEvent(socket, message));
+                @NotNull final PacketUnicastRequest unicastRequest = objectMapper.readValue(message, PacketUnicastRequest.class);
+                serverUnicastEvent.fireAsync(new ServerUnicastEvent(socket, unicastRequest));
+                break;
+
+            case LOGINS_REQUEST:
+                @NotNull final PacketLoginsRequest loginsRequest = objectMapper.readValue(message, PacketLoginsRequest.class);
+                serverLoginsEvent.fireAsync(new ServerLoginsEvent(socket));
                 break;
 
         }

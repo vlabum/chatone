@@ -15,6 +15,9 @@ import java.util.UUID;
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Packet {
+
     private String id = UUID.randomUUID().toString();
+
     private PacketType type = PacketType.NONE;
+
 }

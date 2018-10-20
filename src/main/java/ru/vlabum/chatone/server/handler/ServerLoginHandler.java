@@ -26,11 +26,9 @@ public class ServerLoginHandler {
     @SneakyThrows
     public void login(@ObservesAsync final ServerLoginEvent event) {
         @NotNull final Socket socket = event.getSocket();
-        @NotNull final String message = event.getMessage();
-        @NotNull final ObjectMapper objectMapper = new ObjectMapper();
-        @NotNull final PacketLoginRequest packetLoginRequest = objectMapper.readValue(message, PacketLoginRequest.class);
-        boolean check = userService.check(packetLoginRequest.getLogin(), packetLoginRequest.getPassword());
-        if (check) connectionService.setLogin(socket, packetLoginRequest.getLogin());
+        @NotNull final PacketLoginRequest loginRequest = event.getPacket();
+        @NotNull boolean check = userService.check(loginRequest.getLogin(), loginRequest.getPassword());
+        if (check) connectionService.setLogin(socket, loginRequest.getLogin());
         else System.out.println("Incorrect password or login");
         connectionService.sendResult(socket, PacketType.LOGIN_RESPONSE, check);
     }

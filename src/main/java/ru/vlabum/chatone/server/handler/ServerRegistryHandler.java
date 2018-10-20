@@ -1,8 +1,8 @@
 package ru.vlabum.chatone.server.handler;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.NonNull;
 import lombok.SneakyThrows;
+import org.jetbrains.annotations.NotNull;
 import ru.vlabum.chatone.model.PacketRegistryRequest;
 import ru.vlabum.chatone.model.PacketRegistryResponse;
 import ru.vlabum.chatone.model.PacketType;
@@ -26,12 +26,11 @@ public class ServerRegistryHandler {
 
     @SneakyThrows
     public void registry(@ObservesAsync final ServerRegistryEvent event){
-        @NonNull final Socket socket = event.getSocket();
-        @NonNull final String message = event.getMessage();
-        @NonNull final ObjectMapper objectMapper = new ObjectMapper();
-        @NonNull final PacketRegistryRequest packet = objectMapper.readValue(message, PacketRegistryRequest.class);
-        final boolean result = userService.registry(packet.getLogin(), packet.getPassword());
-        @NonNull final PacketRegistryResponse packetResp = new PacketRegistryResponse();
+        @NotNull final Socket socket = event.getSocket();
+        @NotNull final ObjectMapper objectMapper = new ObjectMapper();
+        @NotNull final PacketRegistryRequest packet = event.getPacket();
+        @NotNull final boolean result = userService.registry(packet.getLogin(), packet.getPassword());
+        @NotNull final PacketRegistryResponse packetResp = new PacketRegistryResponse();
         connectionService.sendResult(socket, PacketType.REGISTRY_RESPONSE, result);
     }
 
