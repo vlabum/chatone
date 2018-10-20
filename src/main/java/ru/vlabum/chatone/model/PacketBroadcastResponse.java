@@ -16,6 +16,10 @@ public class PacketBroadcastResponse extends Packet {
         setType(PacketType.BROADCAST_RESPONSE);
     }
 
+    public PacketBroadcastResponse(final String login, final String message) {
+        this.login = login;
+        this.message = message;
+    }
 
     @Nullable
     private String login = ""; // от кого

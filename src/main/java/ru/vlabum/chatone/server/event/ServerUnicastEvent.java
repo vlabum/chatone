@@ -1,6 +1,7 @@
 package ru.vlabum.chatone.server.event;
 
 import lombok.Getter;
+import ru.vlabum.chatone.model.PacketUnicastRequest;
 
 import java.net.Socket;
 
@@ -8,11 +9,12 @@ import java.net.Socket;
 public class ServerUnicastEvent {
 
     private final Socket socket;
-    private final String message;
 
-    public ServerUnicastEvent(final Socket socket, final String message) {
+    private final PacketUnicastRequest packet;
+
+    public ServerUnicastEvent(final Socket socket, final PacketUnicastRequest packet) {
         this.socket = socket;
-        this.message = message;
+        this.packet = packet;
     }
 
 }

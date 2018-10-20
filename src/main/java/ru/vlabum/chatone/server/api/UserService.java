@@ -1,7 +1,7 @@
 package ru.vlabum.chatone.server.api;
 
 import org.jetbrains.annotations.Nullable;
-import ru.vlabum.chatone.model.User;
+import ru.vlabum.chatone.server.model.User;
 
 public interface UserService {
 

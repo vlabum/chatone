@@ -18,4 +18,5 @@ public class PacketBroadcastRequest extends Packet {
 
     @Nullable
     private String message = "";
+
 }

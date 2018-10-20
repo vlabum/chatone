@@ -6,7 +6,10 @@ import ru.vlabum.chatone.client.event.ClientCommandInputEvent;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Event;
 import javax.swing.*;
+import javax.swing.border.LineBorder;
+import javax.swing.text.html.ListView;
 import java.awt.*;
+import java.util.ArrayList;
 
 
 /**
@@ -21,6 +24,16 @@ public class ChatWindow extends JFrame {
     private final JTextArea textAreaChat = getTextAreaChat("Mental Chat");
     private final JScrollPane textAreaChatScroll = new JScrollPane(textAreaChat);
     private final JTextField textFieldSend = getTextFieldSend();
+    private final DefaultListModel listModel = new DefaultListModel();
+    private final JList<String> list = getJList();
+
+    private JList<String> getJList() {
+        final JList<String> list = new JList<>(listModel);
+        list.setBorder(new LineBorder(Color.gray));
+        list.setFixedCellWidth(100);
+        listModel.addElement("Элемент Списка");
+        return list;
+    }
 
     public ChatWindow(Event<ClientCommandInputEvent> clientCommandInputEvent) {
 
@@ -40,6 +53,7 @@ public class ChatWindow extends JFrame {
         final JPanel panel = new JPanel(new BorderLayout(5, 5));
         panel.add(textAreaChatScroll, BorderLayout.CENTER);
         panel.add(sendPanel, BorderLayout.SOUTH);
+        panel.add(list,BorderLayout.EAST);
         add(panel);
     }
 
@@ -99,6 +113,12 @@ public class ChatWindow extends JFrame {
             textAreaChat.append("\n" + message);
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    public void setListLosgins(ArrayList<String> logins) {
+        for (final String login : logins) {
+            listModel.addElement(login);
         }
     }
 }

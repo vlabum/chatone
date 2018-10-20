@@ -2,6 +2,7 @@ package ru.vlabum.chatone.server.api;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import ru.vlabum.chatone.model.PacketResult;
 import ru.vlabum.chatone.model.PacketType;
 import ru.vlabum.chatone.server.model.Connection;
 
@@ -26,6 +27,11 @@ public interface ConnectionService {
             @Nullable final Socket socket,
             @Nullable final PacketType packetType,
             @Nullable final Boolean success
+    );
+
+    void sendResult(
+            @Nullable final Socket socket,
+            @Nullable final PacketResult packetResult
     );
 
     void sendMessage(

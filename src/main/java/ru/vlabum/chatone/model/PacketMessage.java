@@ -20,6 +20,7 @@ public class PacketMessage extends Packet {
     }
 
     private String login; // от кого сообщение
+
     private String message; // сообщение
 
 }

@@ -56,9 +56,12 @@ public class ClientService implements Client {
     }
 
     @Override
-    @SneakyThrows
     public void send(String message) {
-        out.writeUTF(message);
+        try {
+            out.writeUTF(message);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
