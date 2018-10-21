@@ -8,3 +8,4 @@
 *.xml
 !pom.xml
 !beans.xml
+!mybatis-config.xml
