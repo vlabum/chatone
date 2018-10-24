@@ -16,6 +16,12 @@ import javax.inject.Inject;
 @ApplicationScoped
 public class ClientCommandInputHandler {
 
+    private final static String DELIMITER;
+
+    static {
+        DELIMITER = "\\^";
+    }
+
     @Inject
     private Event<ClientCommandInputEvent> clientCommandInputEvent;
 
@@ -37,21 +43,20 @@ public class ClientCommandInputHandler {
     @Inject
     private Event<ClientPingEvent> clientPingEvent;
 
+    @Inject
+    private Event<ClientUpdateLoginEvent> clientUpdateLoginEvent;
+
     @SneakyThrows
     public void parse(@ObservesAsync final ClientCommandInputEvent event){
         System.out.println("ClientCommandInputHandler");
         @NotNull final String commandUser = event.getCommand();
-        ObjectMapper objectMapper = new ObjectMapper();
+        final ObjectMapper objectMapper = new ObjectMapper();
 
-        @NotNull String command;
-        if (commandUser.startsWith(":"))
-            command = getJSON(commandUser);
-        else
-            command = commandUser;
+        @NotNull final String command = getJSON(commandUser);
+        final String typePacketStr = getValueJson(command, "type");
 
-        final String json = getValueJson(command, "type");
+        switch (typePacketStr) {
 
-        switch (json) {
             case "LOGINS_REQUEST":
                 final PacketLoginsRequest loginsRequest = objectMapper.readValue(command, PacketLoginsRequest.class);
                 clientLoginsEvent.fireAsync(new ClientLoginsEvent(loginsRequest));
@@ -70,41 +75,72 @@ public class ClientCommandInputHandler {
             case "UNICAST_REQUEST":
                 final PacketUnicastRequest packetUnicastRequest = objectMapper.readValue(command, PacketUnicastRequest.class);
                 clientUnicastEvent.fireAsync(new ClientUnicastEvent(packetUnicastRequest));
-        }
+                return;
 
-
-        if (isJson(command, "registry")) {
-            try {
+            case "REGISTRY_REQUEST":
                 final PacketRegistryRequest packetRegistryRequest = objectMapper.readValue(command, PacketRegistryRequest.class);
                 clientRegistryEvent.fireAsync(new ClientRegistryEvent(packetRegistryRequest));
-            } catch (Exception e) {
-                //TODO нужно будет переделать, чтобы не отсылалось всем, чтобы не спалиться :)
-                final PacketBroadcastRequest packetBroadcast = new PacketBroadcastRequest();
-                packetBroadcast.setMessage(command);
-                clientBroadcastEvent.fireAsync(new ClientBroadcastEvent(packetBroadcast));
-            }
-            return;
+                return;
+
+            case "UPDATELOGIN_REQUEST":
+                final PacketUpdateLoginRequest packetUpdateLoginRequest = objectMapper.readValue(command, PacketUpdateLoginRequest.class);
+                clientUpdateLoginEvent.fireAsync(new ClientUpdateLoginEvent(packetUpdateLoginRequest));
+                return;
+
         }
 
         final PacketBroadcastRequest packetBroadcast = new PacketBroadcastRequest();
         packetBroadcast.setMessage(command);
         clientBroadcastEvent.fireAsync(new ClientBroadcastEvent(packetBroadcast));
+    }
 
+    /**
+     * :ping                        - пинг сервера
+     * :logins                      - запрос списка всех пользователей
+     * :login^{login}^{password}    - идентификация пользователя
+     * :unicast^{login}^{message}   - отправка сообщения {message} конкретному пользователю {login}
+     * :registry^{login}^{password} - регистрация нового пользователя
+     * :updatelogin^{newlogin}      - смена логина пользователя
+     * @param commandUser
+     * @return
+     */
+    @SneakyThrows
+    private String getJSON(final String commandUser) {
+        if (commandUser.startsWith(":ping")) return getPingRequest(commandUser);
+        if (commandUser.startsWith(":logins")) return getLoginsRequest(commandUser);
+        if (commandUser.startsWith(":login")) return getLoginRequest(commandUser);
+        if (commandUser.startsWith(":unicast")) return getUnicastRequest(commandUser);
+        if (commandUser.startsWith(":registry")) return getRegistryRequest(commandUser);
+        if (commandUser.startsWith(":updatelogin")) return getUpdateLoginRequest(commandUser);
+        return commandUser;
     }
 
     @SneakyThrows
-    private String getJSON(final String commandUser) {
-        if (commandUser.startsWith(":logins"))  return getLoginsRequest(commandUser);
-        if (commandUser.startsWith(":login"))   return getLoginRequest(commandUser);
-        if (commandUser.startsWith(":ping"))    return getPingRequest(commandUser);
-        if (commandUser.startsWith(":unicast")) return getUnicastRequest(commandUser);
+    private String getUpdateLoginRequest(final String commandUser) {
+        @NotNull final String[] splits = commandUser.split(DELIMITER);
+        if (splits.length < 2)
+            return "";
+        final ObjectMapper mapper = new ObjectMapper();
+        final PacketUpdateLoginRequest updateLoginRequest = new PacketUpdateLoginRequest();
+        updateLoginRequest.setLogin(splits[1]);
+        return mapper.writeValueAsString(updateLoginRequest);
+    }
 
-        return "";
+    @SneakyThrows
+    private String getRegistryRequest(final String commandUser) {
+        @NotNull final String[] splits = commandUser.split(DELIMITER);
+        if (splits.length < 3)
+            return "";
+        final ObjectMapper mapper = new ObjectMapper();
+        final PacketRegistryRequest registryRequest = new PacketRegistryRequest();
+        registryRequest.setLogin(splits[1]);
+        registryRequest.setPassword(splits[2]);
+        return mapper.writeValueAsString(registryRequest);
     }
 
     @SneakyThrows
     private String getUnicastRequest(final String commandUser) {
-        @NotNull final String[] splits = commandUser.split("\\^");
+        @NotNull final String[] splits = commandUser.split(DELIMITER);
         if (splits.length < 3)
             return "";
         final ObjectMapper mapper = new ObjectMapper();
@@ -123,7 +159,7 @@ public class ClientCommandInputHandler {
 
     @SneakyThrows
     private String getLoginRequest(final String commandUser) {
-        @NotNull final String[] splits = commandUser.split("\\^");
+        @NotNull final String[] splits = commandUser.split(DELIMITER);
         if (splits.length < 3)
             return "";
         final ObjectMapper mapper = new ObjectMapper();
@@ -144,8 +180,8 @@ public class ClientCommandInputHandler {
     private boolean isJson(final String string, final String findNode) {
         try {
             final ObjectMapper mapper = new ObjectMapper();
-            JsonNode jsonNode =  mapper.readTree(string);
-            JsonNode node = jsonNode.findValue(findNode);
+            final JsonNode jsonNode =  mapper.readTree(string);
+            final JsonNode node = jsonNode.findValue(findNode);
             return (node != null);
         } catch (final Exception e) {
             return false;
@@ -156,8 +192,8 @@ public class ClientCommandInputHandler {
     private String getValueJson(final String string, final String findNode) {
         try {
             final ObjectMapper mapper = new ObjectMapper();
-            JsonNode jsonNode =  mapper.readTree(string);
-            JsonNode node = jsonNode.findValue(findNode);
+            final JsonNode jsonNode =  mapper.readTree(string);
+            final JsonNode node = jsonNode.findValue(findNode);
             return node.asText();
         } catch (final Exception e) {
             return "";

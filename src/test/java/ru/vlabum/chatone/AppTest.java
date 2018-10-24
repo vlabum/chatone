@@ -6,6 +6,10 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
 import org.junit.Test;
+import ru.vlabum.chatone.server.model.User;
+import ru.vlabum.chatone.server.service.DBUserService;
+
+import java.util.List;
 
 /**
  * Unit test for simple App.
@@ -19,12 +23,10 @@ public class AppTest
     @SneakyThrows
     public void shouldAnswerWithTrue()
     {
-        final String string = "{\"login\":\"vlabum\"}";
-        final ObjectMapper mapper = new ObjectMapper();
-        JsonNode node =  mapper.readTree(string);
-        JsonNode ret = node.findValue("login");
-        if (ret != null)
-            System.out.println(ret.toString());
-        System.out.println("end");
+        final DBUserService dbUserService = new DBUserService();
+        final List<User> users = dbUserService.getAll();
+        for (final User user : users) {
+            System.out.println(user.toString());
+        }
     }
 }

@@ -36,6 +36,9 @@ public class ServerMessageInputHandler {
     @Inject
     private Event<ServerLoginsEvent> serverLoginsEvent;
 
+    @Inject
+    private Event<ServerUpdateLoginEvent> serverUpdateLoginEvent;
+
     @SneakyThrows
     public void observe(@ObservesAsync final ServerMessageInputEvent event) {
         System.out.println("ServerMessageInputHandler");
@@ -80,6 +83,11 @@ public class ServerMessageInputHandler {
             case LOGINS_REQUEST:
                 @NotNull final PacketLoginsRequest loginsRequest = objectMapper.readValue(message, PacketLoginsRequest.class);
                 serverLoginsEvent.fireAsync(new ServerLoginsEvent(socket));
+                break;
+
+            case UPDATELOGIN_REQUEST:
+                @NotNull final PacketUpdateLoginRequest updateLoginRequest = objectMapper.readValue(message, PacketUpdateLoginRequest.class);
+                serverUpdateLoginEvent.fireAsync(new ServerUpdateLoginEvent(socket, updateLoginRequest));
                 break;
 
         }
