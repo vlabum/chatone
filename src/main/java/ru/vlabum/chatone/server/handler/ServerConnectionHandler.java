@@ -1,6 +1,9 @@
 package ru.vlabum.chatone.server.handler;
 
 import lombok.SneakyThrows;
+import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import ru.vlabum.chatone.server.api.ConnectionService;
 import ru.vlabum.chatone.server.api.Server;
 import ru.vlabum.chatone.server.event.ServerConnectionEvent;
@@ -14,6 +17,9 @@ import java.net.Socket;
 
 @ApplicationScoped
 public class ServerConnectionHandler  {
+
+    @NotNull
+    private static final Logger logger = LoggerFactory.getLogger(ServerConnectionHandler.class);
 
     @Inject
     private Server server;
@@ -29,11 +35,13 @@ public class ServerConnectionHandler  {
 
     @SneakyThrows
     public void connect(@Observes final ServerConnectionEvent event) {
+        logger.info("Start connect");
         System.out.println("ServerConnectionHandler");
         final Socket socket = server.getServerSocket().accept();
         connectionService.add(socket);
         serverMessageEventEvent.fireAsync(new ServerMessageReadEvent(socket));
         serverConnectionEvent.fire(new ServerConnectionEvent());
+        logger.info("Finish connect");
     }
 
 }

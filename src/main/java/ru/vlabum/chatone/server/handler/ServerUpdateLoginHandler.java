@@ -4,6 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import ru.vlabum.chatone.model.PacketRegistryRequest;
 import ru.vlabum.chatone.model.PacketRegistryResponse;
 import ru.vlabum.chatone.model.PacketType;
@@ -20,6 +22,9 @@ import java.net.Socket;
 
 public class ServerUpdateLoginHandler {
 
+    @NotNull
+    private static final Logger logger = LoggerFactory.getLogger(ServerUpdateLoginHandler.class);
+
     @Inject
     private UserService userService;
 
@@ -28,6 +33,7 @@ public class ServerUpdateLoginHandler {
 
     @SneakyThrows
     public void update(@ObservesAsync final ServerUpdateLoginEvent event){
+        logger.info("Start update login");
         @NotNull final Socket socket = event.getSocket();
         @Nullable final Connection connection = connectionService.get(socket);
         if (connection == null) return;
@@ -36,6 +42,7 @@ public class ServerUpdateLoginHandler {
         @NotNull final PacketUpdateLoginRequest packet = event.getPacket();
         @NotNull final boolean result = userService.updateLogin(socket, oldLogin, packet.getLogin());
         connectionService.sendResult(socket, PacketType.UPDATELOGIN_RESPONSE, result);
+        logger.info("Finish update login");
     }
 
 }

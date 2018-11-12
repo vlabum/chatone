@@ -3,6 +3,8 @@ package ru.vlabum.chatone.server.handler;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import ru.vlabum.chatone.model.*;
 import ru.vlabum.chatone.server.event.*;
 
@@ -14,6 +16,9 @@ import java.net.Socket;
 
 @ApplicationScoped
 public class ServerMessageInputHandler {
+
+    @NotNull
+    private static final Logger logger = LoggerFactory.getLogger(ServerMessageInputHandler.class);
 
     @Inject
     private Event<ServerPingEvent> serverPingEvent;
@@ -41,6 +46,7 @@ public class ServerMessageInputHandler {
 
     @SneakyThrows
     public void observe(@ObservesAsync final ServerMessageInputEvent event) {
+        logger.info("Start observe");
         System.out.println("ServerMessageInputHandler");
         @NotNull final Socket socket = event.getSocket();
         @NotNull final String message = event.getMessage();
@@ -91,6 +97,7 @@ public class ServerMessageInputHandler {
                 break;
 
         }
+        logger.info("Finish observe");
     }
 
 }
