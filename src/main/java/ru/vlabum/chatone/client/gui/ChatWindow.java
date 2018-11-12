@@ -2,6 +2,8 @@ package ru.vlabum.chatone.client.gui;
 
 import lombok.Getter;
 import ru.vlabum.chatone.client.event.ClientCommandInputEvent;
+import ru.vlabum.chatone.client.log.LogReader;
+import ru.vlabum.chatone.client.log.LogWriter;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Event;
@@ -55,6 +57,8 @@ public class ChatWindow extends JFrame {
         panel.add(sendPanel, BorderLayout.SOUTH);
         panel.add(list,BorderLayout.EAST);
         add(panel);
+
+        appendMessagesNoLog(LogReader.getLastRows());
     }
 
     /**
@@ -110,7 +114,21 @@ public class ChatWindow extends JFrame {
      */
     public void appendMessages(final String message) {
         try {
-            textAreaChat.append("\n" + message);
+            final String textMessage = "\n" + message;
+            textAreaChat.append(textMessage);
+            LogWriter.writeMessage(textMessage);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Выводим пользователю сообщения, без логирования
+     */
+    public void appendMessagesNoLog(final String message) {
+        try {
+            final String textMessage = "\n" + message;
+            textAreaChat.append(textMessage);
         } catch (Exception e) {
             e.printStackTrace();
         }
