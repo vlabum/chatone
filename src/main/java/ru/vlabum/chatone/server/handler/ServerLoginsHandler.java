@@ -4,6 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import ru.vlabum.chatone.model.PacketBroadcastRequest;
 import ru.vlabum.chatone.model.PacketBroadcastResponse;
 import ru.vlabum.chatone.model.PacketLoginsRequest;
@@ -22,6 +24,9 @@ import java.util.List;
 
 public class ServerLoginsHandler {
 
+    @NotNull
+    private static final Logger logger = LoggerFactory.getLogger(ServerLoginsHandler.class);
+
     @Inject
     private ConnectionService connectionService;
 
@@ -30,6 +35,7 @@ public class ServerLoginsHandler {
 
     @SneakyThrows
     public void sendLogins(@ObservesAsync final ServerLoginsEvent event){
+        logger.info("Start sendLogins");
         @NotNull final Socket socket = event.getSocket();
         @Nullable Connection connection = connectionService.get(socket);
         if (connection == null) return;
@@ -38,6 +44,7 @@ public class ServerLoginsHandler {
         @NotNull List<String> users = new ArrayList<>(userServiceBean.getUsers().keySet());
         response.setUsers(users);
         connectionService.sendMessage(socket, "RequestLogins", mapper.writeValueAsString(response));
+        logger.info("Finish sendLogins");
     }
 
 }

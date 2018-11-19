@@ -4,6 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import ru.vlabum.chatone.model.PacketUnicastRequest;
 import ru.vlabum.chatone.model.PacketUnicastResponse;
 import ru.vlabum.chatone.server.api.ConnectionService;
@@ -18,11 +20,15 @@ import java.net.Socket;
 @ApplicationScoped
 public class ServerUnicastHandler {
 
+    @NotNull
+    private static final Logger logger = LoggerFactory.getLogger(ServerUnicastHandler.class);
+
     @Inject
     private ConnectionService connectionService;
 
     @SneakyThrows
     public void unicast(@ObservesAsync final ServerUnicastEvent event){
+        logger.info("Start unicast");
         @NotNull final Socket socket = event.getSocket();
         @Nullable Connection connection = connectionService.get(socket);
         if (connection == null) return;
@@ -45,6 +51,7 @@ public class ServerUnicastHandler {
             if (login.equals(item.getLogin()) || loginDst.equals(item.getLogin()))
                 connectionService.sendMessage(item.getSocket(), login, objectMapper.writeValueAsString(unicastResponse));
         }
+        logger.info("Finish unicast");
     }
 
 }
